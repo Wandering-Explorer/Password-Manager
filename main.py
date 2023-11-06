@@ -59,10 +59,10 @@ class Storage:
     def __init__(self, path) -> None:
         self.path = path
 
-    def store(self, item):
+    def store(self, item, salt):
         with open(self.path, 'w') as f:
             writer = csv.writer(f)
-            writer.writerow([item])
+            writer.writerow([item, salt])
     
     def retrive(self): #TODO
         with open(self.path, 'r', newline='') as f:
@@ -71,7 +71,16 @@ class Storage:
             for row in reader:
                 for item in row:
                     list.append(item)
-            return list[0]
+            return list
+    
+    def retrive_salt(self):
+        list = self.retrive()
+        print(list)
+        return list[1]
+    
+    def retrive_hash(self):
+        list = self.retrive
+        return list[0]
 
 
 class Authentication:
@@ -80,37 +89,41 @@ class Authentication:
 
     def check(self):
         master_password = self.master_password
+        storage = Storage("Authentication_code.csv")
+        salt = storage.retrive_salt()   
 
         kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
+        salt=salt,
         length=32,
         iterations=500000,
         )
 
         key = kdf.derive(master_password)
-
-        storage = Storage("Authentication_code.csv")
-        stored_key = storage.retrive()
+        stored_key = storage.retrive_hash()
 
         try:
             kdf.verify(key, stored_key)
+            return 0
         except InvalidKey:
             raise "Authentication_Failure" 
         
     def store(self):
         master_password = self.master_password
+        storage = Storage("Authentication_code.csv")
+        salt = os.urandom(16)
 
         kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
+        salt=salt,
         length=32,
         iterations=500000,
         )
 
         key = kdf.derive(master_password)
-        storage = Storage("Authentication_code.csv")
-        storage.store(key)
+        storage.store(key,salt)
     
     
-storage = Storage("test.csv")
-storage.store("Hi!")
-print(storage.retrive())
+auth = Authentication(b"Hi32#")
+auth.store()
+auth.check()
