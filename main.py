@@ -1,7 +1,3 @@
-import string
-import secrets
-import csv
-
 # Crypography Imports
 import base64
 import os
@@ -10,120 +6,94 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.exceptions import InvalidKey
 
-class Password:
-    def __init__(self, alpha, num, special_characters) -> None:
-        self.alpha = alpha
-        self.num = num
-        self.special_characters = special_characters
+# DataBase and Password Maker Imports
+import data
+import maker
 
-    def make(self) -> str:
-        alpha = self.get_array('alpha', self.alpha)
-        num = self.get_array('num',self.num)
-        special_characters = self.get_array('s_chars', self.special_characters)
+class Encryption:
+    def __init__(self) -> None:
+        ...
 
-        password = []
-        value_list = [alpha, num, special_characters]
+    def encrypt(self, master_password, salt, target_item):
+        password = master_password.encode('utf-8')
+        salt = salt
+        kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=480000,
+        )
+        key = base64.urlsafe_b64encode(kdf.derive(password))
+        f = Fernet(key)
+        return f.encrypt(target_item)
 
-        while len(value_list) != 0:
-            catagory = value_list[secrets.randbelow(len(value_list))]
-            element = catagory[secrets.randbelow(len(catagory))]
-            password.append(element)
-            catagory.remove(element)
-            value_list.remove(catagory) if len(catagory) == 0 else None
-
-        result = ""
-        for i in password:
-            result += i
-
-        return result
-    
-    def get_array(self, type, length):
-        sequence = ""
-
-        match type:
-            case 'alpha':
-                sequence = string.ascii_letters
-            case 'num':
-                sequence = string.digits
-            case 's_chars':
-                sequence = string.punctuation
-        
-        result = []
-
-        for i in range(length):
-            result.append(secrets.choice(sequence))
-
-        return result
-
-class Storage:
-    def __init__(self, path) -> None:
-        self.path = path
-
-    def store(self, item, salt):
-        with open(self.path, 'w') as f:
-            writer = csv.writer(f)
-            writer.writerow([item, salt])
-    
-    def retrive(self): #TODO
-        with open(self.path, 'r', newline='') as f:
-            reader = csv.reader(f)
-            list = []
-            for row in reader:
-                for item in row:
-                    list.append(item)
-            return list
-    
-    def retrive_salt(self):
-        list = self.retrive()
-        print(list)
-        return list[1]
-    
-    def retrive_hash(self):
-        list = self.retrive
-        return list[0]
+    def decrypt(self, master_password, salt, target_item):
+        password = master_password.encode('utf-8')
+        salt = salt
+        kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=480000,
+        )
+        key = base64.urlsafe_b64encode(kdf.derive(password))
+        f = Fernet(key)
+        try: result = f.decrypt(target_item)
+        except Fernet.InvalidToken: return 1 
+        else: return result
 
 
-class Authentication:
-    def __init__(self, master_password) -> None:
+class Password_Manger():
+    def __init__(self, filename) -> None:
+        self.username = None
+        self.master_password = None
+        self.filename = filename
+        self.salt = None
+        self.verfied = None
+
+    def register(self, username, master_password):
+        # Intialize Values
+        self.username = username
         self.master_password = master_password
+        self.salt = os.urandom(16)
+        encryption = Encryption()
 
-    def check(self):
-        master_password = self.master_password
-        storage = Storage("Authentication_code.csv")
-        salt = storage.retrive_salt()   
+        # Intialize Databbase Instance
+        database = data.database()
 
-        kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        salt=salt,
-        length=32,
-        iterations=500000,
-        )
+        # Create Database
+        database.create_db(self.filename)
 
-        key = kdf.derive(master_password)
-        stored_key = storage.retrive_hash()
-
-        try:
-            kdf.verify(key, stored_key)
-            return 0
-        except InvalidKey:
-            raise "Authentication_Failure" 
+        # Add up the user
+        match database.add_user(self.username, self.salt):
+            case 1:
+                return 1
+            
+        # Store Auth Record
+        auth_pass = Encryption.encrypt(self.master_password,self.salt, "Auth Pass")
+        data.add_password(username, "Authentication Record", auth_pass)
         
-    def store(self):
-        master_password = self.master_password
-        storage = Storage("Authentication_code.csv")
-        salt = os.urandom(16)
+        # Update Verfication Status
+        self.verfied = True
 
-        kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        salt=salt,
-        length=32,
-        iterations=500000,
-        )
+    def login(self, username, master_password):
 
-        key = kdf.derive(master_password)
-        storage.store(key,salt)
+        # Intilaize Values
+        retrived_salt = data.database.retrive_salt(username)
+        retrived_auth_pass = data.database.retrive_encrypted_password(username,"Authentication Record")
+        result = Encryption.decrypt(master_password,retrived_salt, retrived_auth_pass)
+        
+        if result != 1:
+
+        # Intialize quick  acces values
+            self.username = username
+            self.master_password = master_password
+            self.salt = retrived_salt
+            self.verfied = True
+            return 0
+        else:
+
+        # Update quick values
+            self.verfied = False
+            return 1
     
-    
-auth = Authentication(b"Hi32#")
-auth.store()
-auth.check()
