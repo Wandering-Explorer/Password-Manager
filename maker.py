@@ -1,47 +1,53 @@
 import secrets
 import string
+from typing import List
 
-class Password:
-    def __init__(self, alpha, num, special_characters) -> None:
-        self.alpha = alpha
-        self.num = num
-        self.special_characters = special_characters
+def make_distinct_password (
+    length : int,
+    characterset : List[str]
+):
+    """
+    Makes A Password Useing A Single Length Variable and a characterset 
+    Acceptable Values of characterset:
+    uppercase_chars,
+    lowercase_chars,
+    numbers,
+    special_chars
 
-    def make(self) -> str:
-        alpha = self.get_array('alpha', self.alpha)
-        num = self.get_array('num',self.num)
-        special_characters = self.get_array('s_chars', self.special_characters)
+    If say we were to make a characterset of all values it would be:
+    ['uppercase_chars', 'lowercase_chars', 'numbers', 'special_chars']
+    The functions outputs a password based on the given length and the charters allowed via provideing them in characterset.
+    """
+    # Create Another Instance of the list
+    characterset_instance = characterset.copy()
 
-        password = []
-        value_list = [alpha, num, special_characters]
+    # Randomize List:
+    randomized_list = []
+    while len(characterset_instance) != 0:
+        random_index = secrets.randbelow(len(characterset_instance))
+        randomized_list.append(characterset_instance[random_index])
+        characterset_instance.remove(characterset_instance[random_index])
 
-        while len(value_list) != 0:
-            catagory = value_list[secrets.randbelow(len(value_list))]
-            element = catagory[secrets.randbelow(len(catagory))]
-            password.append(element)
-            catagory.remove(element)
-            value_list.remove(catagory) if len(catagory) == 0 else None
 
-        result = ""
-        for i in password:
-            result += i
+    # Intilaize Master String!
+    master_string : str = ""
+    for i in randomized_list:
+        match i:
+            case 'uppercase_chars':
+                master_string += ''.join(secrets.choice(string.ascii_uppercase) for i in range(len(string.ascii_uppercase)))
+                
+            case 'lowercase_chars':
+                master_string += ''.join(secrets.choice(string.ascii_lowercase) for i in range(len(string.ascii_lowercase)))
+            
+            case 'numbers':
+                master_string += ''.join(secrets.choice(string.digits) for i in range(len(string.digits)))
 
-        return result
-    
-    def get_array(self, type, length):
-        sequence = ""
+            case 'special_chars':
+                master_string += ''.join(secrets.choice(string.punctuation) for i in range(len(string.punctuation)))
 
-        match type:
-            case 'alpha':
-                sequence = string.ascii_letters
-            case 'num':
-                sequence = string.digits
-            case 's_chars':
-                sequence = string.punctuation
-        
-        result = []
+    # Generate Password
+    password = ''.join(secrets.choice(master_string) for i in range(length))
 
-        for i in range(length):
-            result.append(secrets.choice(sequence))
+    # Return Password 
+    return password
 
-        return result
