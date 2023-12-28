@@ -109,7 +109,7 @@ add_password_layout = [
     [
         sg.Text("Enter Password ", expand_x = True, justification = 'center'),
         sg.Input(key = '-ADD-ENTRY-PASSWORD-', expand_x = True, justification = 'center', do_not_clear = False),
-        sg.Image("C:/Users/ghosa/Desktop/Master Folder/Project/Password_manager/Icons/key.png",
+        sg.Image("Icons/key.png",
         expand_x = True, 
         expand_y = True, 
         background_color = '#fdcb52', 
@@ -137,7 +137,7 @@ edit_password_layout = [
     [
         sg.Text("Enter Password ", expand_x = True, justification = 'center'),
         sg.Input(key = '-EDIT-ENTRY-PASSWORD-', expand_x = True, justification = 'center'),
-        sg.Image("C:/Users/ghosa/Desktop/Master Folder/Project/Password_manager/Icons/key.png",
+        sg.Image("Icons/key.png",
         expand_x = True, 
         expand_y = True, 
         background_color = '#fdcb52', 
