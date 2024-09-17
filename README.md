@@ -17,9 +17,6 @@ Dependences:
 
 I am looking forward to finding a fix for it 
 
-### references
-[^1]: https://sourceforge.net/p/keepass/discussion/329221/thread/565087de57/?limit=25#341a
-
 ## License
 This project, Password-Manager, © 2023 by Ramanuj Ghosal, is licensed under CC BY-NC 4.0.
 
@@ -30,4 +27,7 @@ This project includes the following third-party libraries:
 - **cryptography**: Licensed under the Apache License 2.0. See: https://www.apache.org/licenses/LICENSE-2.0
 
 Make sure to comply with the licenses of these libraries when using the project.
+
+### references
+[^1]: https://sourceforge.net/p/keepass/discussion/329221/thread/565087de57/?limit=25#341a
 
