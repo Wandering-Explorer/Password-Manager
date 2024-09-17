@@ -1,0 +1,10 @@
+Password-Manager © 2023 by Ramanuj Ghosal is licensed under CC BY-NC 4.0.
+
+You may share and adapt the material, but only for non-commercial purposes.
+
+This project includes third-party libraries licensed under different terms:
+
+1. PySimpleGUI - Licensed under its own terms. Use of PySimpleGUI is subject to the PySimpleGUI license available at: https://PySimpleGUI.com/eula
+2. cryptography - Licensed under the Apache License 2.0. Full license details can be found at: https://www.apache.org/licenses/LICENSE-2.0
+
+Full license details for the project can be found at: https://creativecommons.org/licenses/by-nc/4.0/
