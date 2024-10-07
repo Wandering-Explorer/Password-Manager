@@ -1,0 +1,2 @@
+cryptography==42.0.1
+PySimpleGUI==5.0.6

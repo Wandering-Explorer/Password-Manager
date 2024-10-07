@@ -11,6 +11,8 @@ Installation is simple: just download the repo, install listed librarys and you 
 Dependences:
 - PySimpleGUI
 - Cryptography
+
+To install just run: ```pip install -r requirements.txt```
   
 # Known Bugs
 - When You Try to Copy something useing the right click menu and after the operation you try to do it again it will kinda work but the progress bar would be in left instead of being in the middle
@@ -28,6 +30,5 @@ This project includes the following third-party libraries:
 
 Make sure to comply with the licenses of these libraries when using the project.
 
-### references
 [^1]: https://sourceforge.net/p/keepass/discussion/329221/thread/565087de57/?limit=25#341a
 
