@@ -6,7 +6,7 @@ The Database is designed with a users table and each user has their table for pa
 
 When the user copies the username or password a timer starts and Windows is notified to prevent all copied text being included in the clipboard history or synchronized to the user's other devices. Keepass's Dev helped me a lot to implement the feature as I am an idiot[^1].
 
-# Instalation 
+# Installation 
 Installation is simple: just download the repo, install listed librarys and you are done. Whenever you want to open the password manager just run the `gui.py` file.
 Dependences:
 - PySimpleGUI
